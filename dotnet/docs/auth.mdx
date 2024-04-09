@@ -14,7 +14,7 @@ Playwright executes tests in isolated environments called [browser contexts](./b
 
 Regardless of the authentication strategy you choose, you are likely to store authenticated browser state on the file system.
 
-We recommend to create `playwright/.auth` directory and add it to your `.gitignore`. Your authentication routine will produce authenticated browser state and save it to a file in this `playwright/.auth` directory. Later on, tests will reuse this state and start already authenticated.
+We recommend to create `playwright/.auth` in the root of your test project directory and add it to your `.gitignore`. Your authentication routine will produce authenticated browser state and save it to a file in this `playwright/.auth` directory. Later on, tests will reuse this state and start already authenticated.
 
 <Tabs
   groupId="bash-flavor"
@@ -78,19 +78,19 @@ Web apps use cookie-based or token-based authentication, where authenticated sta
 
 Cookies and local storage state can be used across different browsers. They depend on your application's authentication model: some apps might require both cookies and local storage.
 
-The following code snippet retrieves state from an authenticated context and creates a new context with that state.
+The following code snippet retrieves state from an authenticated context and creates a new context with that state. Due to the fact that tests are executed in the `bin\Debug\netX.0\` folder a relative path is used to refer to the newly created `playwright/.auth` directory. 
 
 ```csharp
 // Save storage state into the file.
 await context.StorageStateAsync(new()
 {
-    Path = "state.json"
+    Path = "../../../playwright/.auth/state.json"
 });
 
 // Create a new context with the saved storage state.
 var context = await browser.NewContextAsync(new()
 {
-    StorageStatePath = "state.json"
+    StorageStatePath = "../../../playwright/.auth/state.json"
 });
 ```
 
